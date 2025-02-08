@@ -1,15 +1,19 @@
-import { Box, Button, Divider, FormControl, Grid,  Input,  Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FormControl, Grid,   Select,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
 // import React from 'react'
 import data from '../API/SampleUser.json';
-import { useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 // import { BsThreeDots } from "react-icons/bs";
-import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+// import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch, { SwitchProps } from '@mui/material/Switch';
+import Stack from '@mui/material/Stack';
 import React from 'react';
 // import SelectInput from '@mui/material/Select/SelectInput';
 import { Theme, useTheme } from '@mui/material/styles';
@@ -24,6 +28,252 @@ import cross from "../assets/AcceptRejectIcons/cross.png";
 // import PollActions from './PollsAction';
 // import { Button, Input } from '@mui/material';
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
+
+
+// For Modal Restriction Event
+
+const AddPollDialog = memo(({ 
+  open, 
+  handleChange,
+  options,
+  questions,
+  pollname,
+  handlequestionChange,
+  handleClose,
+  handleSelectChange
+}: {
+  open: boolean;
+  options: {
+      option1: string;
+      option2: string;
+      option3: string;
+      option4: string;
+  };
+  questions:string;
+  pollname:string;
+        handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+        handlequestionChange : (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+        handleSelectChange:(any);
+        handleClose: (any)
+  }) => {
+
+    const IsformDisabled =  (options.option1 || options.option2 || options.option3 || options.option4)  && questions && pollname
+ 
+
+  
+
+  return (
+      <BootstrapDialog
+          onClose={handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+      >
+          <DialogTitle
+              sx={{ m: 0, p: 2, fontWeight: "bold" }}
+              id="customized-dialog-title"
+          >
+              Add Polls
+          </DialogTitle>
+          <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
+          <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                  color: 'grey.500',
+              }}
+          >
+              <CloseIcon />
+          </IconButton>
+          <DialogContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 4, overflow: 'hidden' }}>
+                  <Box>
+                      <Typography sx={{ mb: '7px', fontWeight: 'bold' }}>Questions</Typography>
+                      <TextField
+                          variant='standard'
+                          name="Questions"
+                          // value={formData.categoryName}
+                          onChange={handlequestionChange}
+                          fullWidth
+                          placeholder="Enter Your Questions"
+                          sx={{ width: 300 }}
+                      />
+                  </Box>
+                  
+                  <Box sx={{ mr: '100px',display: 'flex', flexDirection: 'column', }}>
+                      <Typography sx={{ fontWeight: 'bold', mb: '5px' }}>Poll Name</Typography>
+                      <FormControl sx={{mt:1}}>
+                              {/* <InputLabel>Select</InputLabel> */}
+                              <Select variant="outlined" size='small' sx={{width:'219px'}} onChange={handleSelectChange}  >
+                              <MenuItem value="user">Education</MenuItem>
+                              <MenuItem value='provider'>Social</MenuItem>
+                              </Select>
+                              </FormControl>
+                  </Box>
+              </Box>
+                    
+              <Box sx={{ mt: '15px',display:'flex',flexDirection:'column',gap:2 }}>
+                  <Typography sx={{ fontWeight: 'bold' }}>Options</Typography>
+                  <TextField
+                          variant='standard'
+                          name="option1"
+                          value={options.option1}
+                          onChange={handleChange}
+                          fullWidth
+                          placeholder="Add Option 01"
+                          sx={{ width: 300 }}
+                      />
+                    <TextField
+                          variant='standard'
+                          name="option2"
+                          value={options.option2}
+                          onChange={handleChange}
+                          fullWidth
+                          placeholder="Add Option 02"
+                          sx={{ width: 300 }}
+                      />
+                      <TextField
+                          variant='standard'
+                          name="option3"
+                          value={options.option3}
+                          onChange={handleChange}
+                          fullWidth
+                          placeholder="Add Option 03"
+                          sx={{ width: 300 }}
+                      />
+                      <TextField
+                          variant='standard'
+                          name="option4"
+                          value={options.option4}
+                          onChange={handleChange}
+                          fullWidth
+                          placeholder="Add Option 04"
+                          sx={{ width: 300 }}
+                      />
+                      <Box sx={{display:'flex',alignItems:'center',gap:12}}>
+                        <Typography>Allow Multiple Answers</Typography>
+                        <FormControlLabel
+                          control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                          label=""
+                        />
+                      </Box>
+              </Box>
+          </DialogContent>
+          <DialogActions sx={{ mr: 1, mb: 1 }}>
+              <Button 
+                  variant='outlined' 
+                  sx={{
+                      minWidth: 84,
+                      height: '40px',
+                      padding: '7px',
+                      backgroundColor: "#d40000",
+                      textTransform: 'none',
+                      color: 'white',
+                      '&:hover': {
+                          backgroundColor: "#b30000"
+                      }
+                  }}
+                  disabled={!IsformDisabled}
+                 
+
+              >
+                  Add
+              </Button>
+              <Button 
+                  variant='outlined' 
+                  sx={{
+                      minWidth: 84,
+                      height: '40px',
+                      padding: '7px',
+                      textTransform: 'none',
+                      color: 'black',
+                      border: '2px solid #ebebeb'
+                  }} 
+                  onClick={handleClose}
+              >
+                  Close
+              </Button>
+          </DialogActions>
+      </BootstrapDialog>
+  );
+});
+
+
+// Toggle Switch
+
+const IOSSwitch = styled((props: SwitchProps) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(16px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        backgroundColor: 'red',
+        opacity: 1,
+        border: 0,
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#2ECA45',
+        }),
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5,
+      },
+    },
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      color: '#33cf4d',
+      border: '6px solid #fff',
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles('dark', {
+        color: theme.palette.grey[600],
+      }),
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: 0.7,
+      ...theme.applyStyles('dark', {
+        opacity: 0.3,
+      }),
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 22,
+    height: 22,
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 26 / 2,
+    backgroundColor: '#E9E9EA',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500,
+    }),
+    ...theme.applyStyles('dark', {
+      backgroundColor: '#39393D',
+    }),
+  },
+}));
+
+
+
+
 const Polls = () => {
 
     const Headers = [
@@ -35,103 +285,81 @@ const Polls = () => {
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-      PaperProps: {
-        style: {
-          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-          width: 250,
-        },
-      },
-    };
-
-    const names = [
-      'Oliver Hansen',
-      'Van Henry',
-      'April Tucker',
-      'Ralph Hubbard',
-      'Omar Alexander',
-      'Carlos Abbott',
-      'Miriam Wagner',
-      'Bradley Wilkerson',
-      'Virginia Andrews',
-      'Kelly Snyder',
-    ];
-
-
     
+
+       
 
     // const itemsPerPage = 10;
     // const [currentPage, setCurrentPage] = useState(1);
     const [open, setOpen] = React.useState(false);
     const [eyeopen,seteyeOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  
     // const [usersType,setUsersType] = React.useState(0);  
     const [buttonText, setButtonText] = useState('Accept');
+    const [questions,setQuestions] = useState('');
+    const[pollname,setPollName] = useState("");
+    const [options,setOptions] = useState({
+      option1:'',
+      option2:'',
+      option3:'',
+      option4:'',
+    })
 
-
-
-
-    // Select Element
-
+    
   const theme = useTheme();
   const [personName, setPersonName] = React.useState<string[]>([]);
 
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  // const handleTabChange = ( newValue: number) => {
-  //   setUsersType(newValue)
-  // }
-
-  const handleClick = () => {
-    setButtonText('Accepted');
-  };
+    
+  const handleQuestionChange = (e:any) =>{
+    let filteredValue = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+    setQuestions(filteredValue)
+  }
+    
+    
+  const handleClick = useCallback((event:any) => {
+  setAnchorEl(event.currentTarget);
+  }, []);
+        
+  const handleActionClose = useCallback(() => {
+  setAnchorEl(null);
+  }, []);
+        
+  const handleClickOpen = useCallback(() => {
+  setOpen(true);
+  }, []);
+        
+  const handleChange = useCallback((e:any) => {
+      const { name, value } = e.target;
+      console.log("nameValue",name,value)
+      setOptions((prevData) => ({
+        ...prevData,
+            [name]: value
+          }));
+    },[]);
+        
 
   
-
-  
-  
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };  
-
-  // const handleEyeOpen = () =>{
-  //   seteyeOpen(true)
-  // }
-
   const handleEyeClose = () => {
     seteyeOpen(false)
   }
 
-  function getStyles(name: string, personName: string[], theme: Theme) {
-    return {
-      fontWeight: personName.includes(name)
-        ? theme.typography.fontWeightMedium
-        : theme.typography.fontWeightRegular,
-    };
-  }
+   const handleClose = useCallback(() => {
+          setOpen(false);
+          setQuestions('')
+          // setOptions({''})
+          setPollName('')
+        
+      }, []);
 
-  
 
-  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-    },
-  }));
+    const handleSelectChange = (event: SelectChangeEvent<any>) => {
+      console.log("Datghg",event.target.value)
+      setPollName(event.target.value)
+    }
+
+
 
 
   const planHistory = [
@@ -207,140 +435,22 @@ const Polls = () => {
       <Box>
         {/* Add content Button with Modal */}
 
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
+        <AddPollDialog
           open={open}
-          // sx={{pa}}
-        >
-          <DialogTitle
-            sx={{ m: 0, p: 2, fontWeight: "bold" }}
-            id="customized-dialog-title"
-          >
-            Add category
-          </DialogTitle>
-          <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
-          >
-            <CloseIcon />
-          </IconButton>
+          handleChange={handleChange}
+          options={options}
+          questions={questions}
+          pollname={pollname}
+          handlequestionChange={handleQuestionChange}
+          handleClose={handleClose}
+          handleSelectChange={handleSelectChange}
+        
+        
+        />
 
-          <DialogContent>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                overflow: "hidden",
-              }}
-            >
-              <Box>
-                <Typography sx={{ mb: "7px", fontWeight: "bold" }}>
-                  Category
-                </Typography>
-                {/* Select Element */}
-                <FormControl sx={{ width: 300 }}>
-                  {/* <InputLabel>Name</InputLabel> */}
-                  <Select
-                    labelId="demo-multiple-name-label"
-                    id="demo-multiple-name"
-                    value={personName}
-                    onChange={handleChange}
-                    // input={<OutlinedInput />}
-                    MenuProps={MenuProps}
-                    sx={{ height: "40px" }}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
+       
 
-              <Box sx={{ mr: "100px" }}>
-                <Typography sx={{ fontWeight: "bold", mb: "5px" }}>
-                  Upload Image
-                </Typography>
-                <Input
-                  // accept="*"
-                  id="file-input"
-                  type="file"
-                  style={{ display: "none" }}
-                  // onChange={handleFileChange}
-                />
-                <Button
-                  sx={{
-                    color: "#1f1f1f",
-                    backgroundColor: "#f2f2f2",
-                    textTransform: "none",
-                    p: "10px",
-                    border: "1px solid #fafafa ",
-                  }}
-                  component="span"
-                >
-                  Choose File
-                </Button>
-              </Box>
-            </Box>
-
-            <Box sx={{ mt: "15px" }}>
-              <Typography sx={{ fontWeight: "bold" }}>Description</Typography>
-              <TextField
-                label="Enter your description"
-                multiline
-                rows={4}
-                variant="outlined"
-                // value={value}
-                // onChange={onChange}
-                fullWidth
-                // sx={{mt:'5px'}}
-              />
-            </Box>
-          </DialogContent>
-          <DialogActions sx={{ mr: 1, mb: 1 }}>
-            <Button
-              variant="outlined"
-              sx={{
-                minWidth: 84,
-                height: "40px",
-                padding: "7px",
-                backgroundColor: "#d40000",
-                textTransform: "none",
-                color: "white",
-              }}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                minWidth: 84,
-                height: "40px",
-                padding: "7px",
-                textTransform: "none",
-                color: "black",
-                border: "2px solid #ebebeb",
-              }}
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-          </DialogActions>
-        </BootstrapDialog>
+        
 
         {/* Action Eye Modal */}
 

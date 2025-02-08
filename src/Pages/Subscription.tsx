@@ -1,4 +1,4 @@
-import { Box, Button, Divider, FormControl, Grid, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FormControl, Grid, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from '@mui/material'
 // import React from 'react'
 import data from '../API/SampleUser.json';
 // import { useState } from 'react';
@@ -10,20 +10,204 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 // import SelectInput from '@mui/material/Select/SelectInput';
 // import { Theme, useTheme } from '@mui/material/styles';
 // import OutlinedInput from '@mui/material/OutlinedInput';
 // import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 // import { SelectChangeEvent } from '@mui/material/Select';
-// import eye from "../assets/eye/eye.png"
+
 import Tab from '@mui/material/Tab';
+import ActionMenu from '../Components/Common/ActionMenu';
 // import TabContext from '@mui/lab/TabContext';
 // import TabList from '@mui/lab/TabList';
 // import TabPanel from '@mui/lab/TabPanel';
         
 // import { Button, Input } from '@mui/material';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
+
+
+
+const AddSubscriptionDialog = memo(({ 
+  open, 
+  onClose, 
+  formData, 
+  onInputChange,
+  handleChange,
+  Type
+}: {
+
+      open: boolean;
+      onClose: () => void;
+      Type:string;
+      formData: {
+          ModelName: string;
+          Plan: string;
+          subscriptionAmount:string;
+      };
+      onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+      handleChange:(any)
+  
+}) => {
+
+
+  
+  const IsFormValidate = formData.ModelName && formData.Plan && formData.subscriptionAmount && Type
+  
+
+  return (
+    <BootstrapDialog
+    onClose={onClose}
+    aria-labelledby="customized-dialog-title"
+    open={open}
+  >
+    <DialogTitle
+      sx={{ m: 0, p: 2, fontWeight: "bold" }}
+      id="customized-dialog-title"
+    >
+      Add Subscription
+    </DialogTitle>
+    <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
+    <IconButton
+      aria-label="close"
+      onClick={onClose}
+      sx={(theme) => ({
+        position: "absolute",
+        right: 8,
+        top: 8,
+        color: theme.palette.grey[500],
+      })}
+    >
+      <CloseIcon />
+    </IconButton>
+
+    <DialogContent>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          overflow: "hidden",
+          mt:3
+        }}
+      >
+        <Box>
+                        <Typography sx={{fontWeight:'bold'}}>Model</Typography>
+                        <FormControl sx={{mt:1}}>
+                        <TextField 
+                            id="outlined-basic" 
+                            name='ModelName' 
+                            value={formData.ModelName}
+                            variant="outlined" 
+                            placeholder='Add subscription' 
+                            style={{width:'100%'}} 
+                            size="small" 
+                            onChange={onInputChange}
+                          />
+                        </FormControl>
+        </Box>
+
+        <Box>
+                        <Typography sx={{fontWeight:'bold'}}>Plan</Typography>
+                        <FormControl sx={{mt:1}}>
+                        <TextField 
+                          id="outlined-basic" 
+                          name='Plan' 
+                          value={formData.Plan}
+                          variant="outlined" 
+                          placeholder='Duration' 
+                          style={{width:'100%'}} 
+                          size="small" 
+                          onChange={onInputChange}
+                          />
+                        
+                        </FormControl>
+        </Box>
+        
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          overflow: "hidden",
+          mt:4
+        }}
+      >
+        <Box>
+                        <Typography sx={{fontWeight:'bold'}}>Subscription Amount</Typography>
+                        <FormControl sx={{mt:1}}>
+                        <TextField 
+                        id="outlined-basic" 
+                        name='subscriptionAmount'
+                        value={formData.subscriptionAmount}
+                        variant="outlined" 
+                        placeholder='Subscription Amount' 
+                        style={{width:'100%'}} 
+                        size="small"
+                        onChange={onInputChange} 
+                        />
+                        
+                        </FormControl>
+        </Box>
+
+        <Box>
+                        <Typography sx={{fontWeight:'bold'}}>Type</Typography>
+                        <FormControl sx={{mt:1}}>
+                        {/* <InputLabel>Select</InputLabel> */}
+                        <Select variant="outlined" size='small' sx={{width:'219px'}} onChange={handleChange} value={Type} >
+                        <MenuItem value="user">User</MenuItem>
+                        <MenuItem value='provider'>Provider</MenuItem>
+                        </Select>
+                        </FormControl>
+        </Box>
+        
+      </Box>
+    </DialogContent>
+    <DialogActions sx={{ mr: 1, mb: 2,mt:2 }}>
+      <Button
+        variant="outlined"
+        sx={{
+          minWidth: 84,
+          height: "40px",
+          padding: "7px",
+          backgroundColor: "#d40000",
+          textTransform: "none",
+          color: "white",
+        }}
+        disabled={!IsFormValidate}
+      >
+        Add
+      </Button>
+      <Button
+        variant="outlined"
+        sx={{
+          minWidth: 84,
+          height: "40px",
+          padding: "7px",
+          textTransform: "none",
+          color: "black",
+          border: "2px solid #ebebeb",
+        }}
+        onClick={onClose}
+      >
+        Close
+      </Button>
+    </DialogActions>
+  </BootstrapDialog>
+  );
+});
+
 
 const Subscription = () => {
 
@@ -63,25 +247,17 @@ const Subscription = () => {
     const [open, setOpen] = React.useState(false);
     const [eyeopen,seteyeOpen] = React.useState(false);
     const [usersType,setUsersType] = React.useState(0);
-    // const [T,setTabs] = React.useState(0)
+    const [formData, setFormData] = React.useState({
+            ModelName: '',
+            Plan: '',
+            subscriptionAmount:'',
+        });
+    const [Type,setType] = React.useState('')
+    
 
 
 
-    // Select Element
-
-  // const theme = useTheme();
-  // const [personName, setPersonName] = React.useState<string[]>([]);
-
-
-  // const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   setPersonName(
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
+  
 
    // @ts-ignore
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -89,6 +265,23 @@ const Subscription = () => {
   };
 
   
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+          const { name, value } = e.target;
+          console.log(name,value,"Sasas")
+  
+          const filteredValue = ( (name === 'subscriptionAmount' )  ? value.replace(/[^0-9]/g, '')  : value.replace(/[^a-zA-Z0-9\s]/g, '')  );
+  
+          setFormData(prev => ({
+              ...prev,
+              [name]: filteredValue
+          }));
+  }, []);
+
+ const handleChange = (event: SelectChangeEvent<any>) => {
+     // event.preventDefault()
+     let value = event.target.value;
+     setType(value);
+   };
 
   
   
@@ -118,14 +311,7 @@ const Subscription = () => {
 
   
 
-  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-    },
-  }));
+
 
 
   const planHistory = [
@@ -156,6 +342,14 @@ const Subscription = () => {
   ];
 
   console.log("userType",usersType)
+
+  const handleView = (row: any) => {
+    console.log('View:', row);
+  };
+
+  const handleDelete = (row: any) => {
+    console.log('Delete:', row);
+  };
 
 
   return (
@@ -261,125 +455,17 @@ const Subscription = () => {
       <Box>
         {/* Add content Button with Modal */}
 
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
+        <AddSubscriptionDialog
           open={open}
-        >
-          <DialogTitle
-            sx={{ m: 0, p: 2, fontWeight: "bold" }}
-            id="customized-dialog-title"
-          >
-            Add Subscription
-          </DialogTitle>
-          <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
-          >
-            <CloseIcon />
-          </IconButton>
+          onClose={handleClose}
+          formData={formData}
+          Type={Type}
+          onInputChange={handleInputChange}
+          handleChange={handleChange} 
+        />
 
-          <DialogContent>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                overflow: "hidden",
-                mt:3
-              }}
-            >
-              <Box>
-                              <Typography sx={{fontWeight:'bold'}}>Model</Typography>
-                              <FormControl sx={{mt:1}}>
-                              <TextField id="outlined-basic" variant="outlined" placeholder='Add subscription' style={{width:'100%'}} size="small" />
-                              
-                              </FormControl>
-              </Box>
 
-              <Box>
-                              <Typography sx={{fontWeight:'bold'}}>Plan</Typography>
-                              <FormControl sx={{mt:1}}>
-                              <TextField id="outlined-basic" variant="outlined" placeholder='Duration' style={{width:'100%'}} size="small" />
-                              
-                              </FormControl>
-              </Box>
-              
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                overflow: "hidden",
-                mt:4
-              }}
-            >
-              <Box>
-                              <Typography sx={{fontWeight:'bold'}}>Subscription Amount</Typography>
-                              <FormControl sx={{mt:1}}>
-                              <TextField 
-                              id="outlined-basic" 
-                              variant="outlined" 
-                              placeholder='Subscription Amount' 
-                              style={{width:'100%'}} 
-                              size="small" 
-                              />
-                              
-                              </FormControl>
-              </Box>
-
-              <Box>
-                              <Typography sx={{fontWeight:'bold'}}>Type</Typography>
-                              <FormControl sx={{mt:1}}>
-                              {/* <InputLabel>Select</InputLabel> */}
-                              <Select variant="outlined" size='small' sx={{width:'219px'}} >
-                              <MenuItem value="user">User</MenuItem>
-                              <MenuItem value='provider'>Provider</MenuItem>
-                              </Select>
-                              </FormControl>
-              </Box>
-              
-            </Box>
-          </DialogContent>
-          <DialogActions sx={{ mr: 1, mb: 2,mt:2 }}>
-            <Button
-              variant="outlined"
-              sx={{
-                minWidth: 84,
-                height: "40px",
-                padding: "7px",
-                backgroundColor: "#d40000",
-                textTransform: "none",
-                color: "white",
-              }}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                minWidth: 84,
-                height: "40px",
-                padding: "7px",
-                textTransform: "none",
-                color: "black",
-                border: "2px solid #ebebeb",
-              }}
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-          </DialogActions>
-        </BootstrapDialog>
+        
 
         {/* Action Eye Modal */}
 
@@ -523,8 +609,11 @@ const Subscription = () => {
                     <TableCell sx={{pl:'50px',border:'1px solid #ebebeb', borderCollapse:'collapse'}}>{item.Name}</TableCell>
                     <TableCell sx={{pl:'50px',border:'1px solid #ebebeb', borderCollapse:'collapse'}}>{item["phone number"]}</TableCell>
                     <TableCell sx={{pl:'50px',border:'1px solid #ebebeb', borderCollapse:'collapse'}}>3,456</TableCell>
-                    <TableCell sx={{pl:'50px',border:'1px solid #ebebeb', borderCollapse:'collapse'}}>
-                      <BsThreeDots size={25} color="#707070" />
+                    <TableCell sx={{ pl:'50px',border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
+                                              <ActionMenu
+                                                onView={() => handleView(item.No)}
+                                                onDelete={() => handleDelete(item.No)}         
+                                              />
                     </TableCell>
                   </TableRow>
                 ))

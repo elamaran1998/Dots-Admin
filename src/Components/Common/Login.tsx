@@ -12,6 +12,9 @@ import {
   useMediaQuery,
   Divider,
   InputAdornment,
+  Dialog,
+  DialogContent,
+  DialogActions,
  
 } from '@mui/material';
 import { Mail, Lock } from 'lucide-react';
@@ -30,7 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import DialogContent from '@mui/material/DialogContent';
 // import DialogContentText from '@mui/material/DialogContentText';
 // import DialogTitle from '@mui/material/DialogTitle';
-// import check from "../../assets/check/check.png";
+import check from "../../assets/check/check.png";
 import useToast from './ToastMsgs';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../Redux/reducers/TokenReducers';
@@ -56,7 +59,7 @@ function Login() {
   const [showPassword,setShowPassword] = useState(false);
   const [responsemsg,SetResponseMsg] = useState('')
   const[userDetails,setUserDetails] = React.useState<UserDetails[]>([])
-  // const [open,setOpen] = React.useState(false);
+  const [open,setOpen] = React.useState(false);
 
   const Toast = useToast();
 
@@ -69,10 +72,7 @@ function Login() {
 
  
 
-  // const handleClose = () => {
-  //   setOpen(false);
-  //   navigate('/dashboard', { state: userDetails, replace: true });
-  // };
+ 
 
 
   
@@ -82,34 +82,44 @@ function Login() {
     // console.log(password,email,"Targtet")
     const details = {email,password}
     let response =  await LoginUser(details);
+
+    setUserDetails(response.data)
+
     if(response.data){
     localStorage.setItem('Token',JSON.stringify(response.data))
     }
+
     const userToken = response.data.token;
     dispatch(setToken(userToken))
     localStorage.setItem("authToken", userToken);
 
     // set the response to the state
-    setUserDetails(response.data)
 
     setEmail('')
     setPassword('')
 
-
+    // console.log(userDetails,"mkn")
     if(response.message === 'Login successful' && response.data && response.data.token){
       Toast.success(response.message)
-      // setOpen(true)
+      setOpen(true)
       SetResponseMsg(response.data.message);
-      setTimeout(()=>{
-      navigate('/home/dashboard', { state: userDetails, replace: true });
+      // setTimeout(()=>{
+      //   console.log("LOGIN",userDetails)
+      // navigate('/home/dashboard', { state: userDetails, replace: true });
 
-      },5000)
+      // },5000)
 
     }
     else{
       Toast.error("Invalid Credential")
     }
   };  
+
+  const handleClose = () => {
+    setOpen(false);
+    console.log(userDetails,"kkkk")
+    navigate('home/dashboard', { state: userDetails, replace: true });
+  };
 
   const isLoginDisabled = !email || !password;
 
@@ -267,7 +277,7 @@ function Login() {
               {/* <ArrowRight size={20} /> */}
             </Button>
             {/* <ToastContainer /> */}
-            {/* <Dialog
+            <Dialog
                   open={open}
                   onClose={handleClose}
                   aria-labelledby="alert-dialog-title"
@@ -287,7 +297,7 @@ function Login() {
                       Okay
                     </Button>
                   </DialogActions>
-            </Dialog> */}
+            </Dialog>
               
 
 

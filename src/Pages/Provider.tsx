@@ -18,6 +18,7 @@ import { Theme, useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material/Select';
 import eye from "../assets/eye/eye.png"
+import ActionMenu from '../Components/Common/ActionMenu';
 // import { Button, Input } from '@mui/material';
 
 const Provider = () => {
@@ -157,6 +158,13 @@ const Provider = () => {
     },
   ];
 
+  const handleView = (row: any) => {
+    console.log('View:', row);
+  };
+
+  const handleDelete = (row: any) => {
+    console.log('Delete:', row);
+  };
 
 
   return (
@@ -196,8 +204,10 @@ const Provider = () => {
         </Box>
       </Box>
       <Box>
-        {/* Add content Button with Modal */}
 
+
+
+        {/* Add content Button with Modal */}
         <BootstrapDialog
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
@@ -492,8 +502,11 @@ const Provider = () => {
                     <TableCell sx={{border:'1px solid #ebebeb',borderCollapse:'collapse',cursor:'pointer'}}><img src={eye} height={20} width={20} onClick={handleEyeOpen} /></TableCell>
                     <TableCell sx={{border:'1px solid #ebebeb',borderCollapse:'collapse'}}>{item.useraddress}</TableCell>
 
-                    <TableCell>
-                      <BsThreeDots size={25} color="#707070" />
+                    <TableCell sx={{ border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
+                                              <ActionMenu
+                                                onView={() => handleView(item.No)}
+                                                onDelete={() => handleDelete(item.No)}
+                                              />
                     </TableCell>
                   </TableRow>
                 ))

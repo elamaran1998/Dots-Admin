@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Theme, useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import { AddCategory, FetchCategory } from '../API/api';
+import ActionMenu from '../Components/Common/ActionMenu';
 
 // Move styled component outside
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -52,8 +53,6 @@ const AddCategoryDialog = memo(({
     };
 
     
-
-
     const IsformDisabled = formData.categoryName && formData.description && formData.file
 
     return (
@@ -82,9 +81,9 @@ const AddCategoryDialog = memo(({
                 <CloseIcon />
             </IconButton>
             <DialogContent>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 4, overflow: 'hidden' }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 4, mb:5, overflow: 'hidden' }}>
                     <Box>
-                        <Typography sx={{ mb: '7px', fontWeight: 'bold' }}>Category</Typography>
+                        <Typography sx={{ mb: '8px', fontWeight: 'bold' }}>Category</Typography>
                         <TextField
                             variant="outlined"
                             name="categoryName"
@@ -212,6 +211,9 @@ const ServiceCategory = () => {
         description: '',
         file: null as File | null
     });
+    
+
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -224,6 +226,7 @@ const ServiceCategory = () => {
             [name]: filteredValue
         }));
     }, []);
+    
 
     const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0] || null;
@@ -254,16 +257,34 @@ const ServiceCategory = () => {
         });
     }, []);
 
+    const handleView = (row: any) => {
+        console.log('View:', row);
+      };
+    
+      const handleDelete = (row: any) => {
+        console.log('Delete:', row);
+      };
+
+    
     const handleAddcategory = async() => {
+
+      setFormData({
+        categoryName:'',
+        file:null,
+        description:''
+
+      })
+
+
 
       const data = {
         formData,category
       }
-
       console.log(data,"payloadData")
 
-      await AddCategory(data)
-      
+      await AddCategory(data);
+
+
 
     }
 
@@ -275,6 +296,8 @@ const ServiceCategory = () => {
         }
         fetchData();
     }, []);
+
+
 
     return (
         <>
@@ -371,17 +394,15 @@ const ServiceCategory = () => {
                                         </TableCell>
                                         <TableCell sx={{ border: '1px solid #ebebeb', borderCollapse: 'collapse', textAlign: 'center' }}>{item.cat_id}</TableCell>
                                         <TableCell sx={{ border: '1px solid #ebebeb', borderCollapse: 'collapse', minWidth: 2 }}>{item.description}</TableCell>
-                                        <TableCell sx={{ border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
-                                            <BsThreeDots size={25} color="#707070" style={{ cursor: "pointer" }} onClick={handleClick} />
-                                            <Menu anchorEl={anchorEl} open={Actionopen} onClose={handleActionClose} sx={{ backgroundColor: 'white' }}>
-                                                <MenuItem onClick={handleActionClose}>
-                                                    View
-                                                </MenuItem>
-                                                <MenuItem onClick={handleActionClose}>
-                                                    Delete
-                                                </MenuItem>
-                                            </Menu>
-                                        </TableCell>
+                                        {/* <TableCell sx={{ border: '1px solid #ebebeb', borderCollapse: 'collapse' }}> */}
+                                            <BsThreeDots size={25} color="#707070" style={{ cursor: "pointer" }} />
+                                            <TableCell sx={{pl:'50px', border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
+                                                <ActionMenu
+                                                onView={() => handleView(item.id)}
+                                                onDelete={() => handleDelete(item.id)}
+                                            />
+                                                </TableCell>
+                                        {/* </TableCell> */}
                                     </TableRow>
                                 ))
                             )}

@@ -1,7 +1,7 @@
-import { Box, Button, Divider, FormControl, Input, Menu, Pagination, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FormControl, Menu, Pagination, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
 // import React from 'react'
-import data from '../API/Sample_data.json';
-import { useCallback, useEffect, useState } from 'react';
+// import data from '../API/Sample_data.json';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { BsThreeDots } from "react-icons/bs";
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -12,13 +12,201 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 // import SelectInput from '@mui/material/Select/SelectInput';
-import { Theme, useTheme } from '@mui/material/styles';
+// import { Theme, useTheme } from '@mui/material/styles';
 // import OutlinedInput from '@mui/material/OutlinedInput';
 // import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { FetchSubCategory } from '../API/api';
+import ActionMenu from '../Components/Common/ActionMenu';
 // import { Button, Input } from '@mui/material';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
+
+
+const AddSubCategoryDialog = memo(({ 
+  open, 
+  onClose, 
+  formData,
+  category,
+  handleChange, 
+  onInputChange, 
+  onFileChange, 
+  fileInputRef ,
+ 
+}: {
+  open: boolean;
+  onClose: () => void;
+  formData: {
+      subcategory: string;
+      description: string;
+      file: File | null;
+  };
+  category:string;
+  handleChange:(any)
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  // handleAddcategory:(any)
+}) => {
+
+
+  const handleFileClick = () => {
+      fileInputRef.current?.click();
+  };
+
+  
+  const IsformDisabled = formData.subcategory && formData.description && formData.file 
+
+  return (
+  
+    <BootstrapDialog
+    onClose={onClose}
+    aria-labelledby="customized-dialog-title"
+    open={open}
+  >
+    <DialogTitle
+      sx={{ m: 0, p: 2, fontWeight: "bold" }}
+      id="customized-dialog-title"
+    >
+      Edit Sub Category
+    </DialogTitle>
+    <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
+    <IconButton
+      aria-label="close"
+      onClick={onClose}
+      sx={(theme) => ({
+        position: "absolute",
+        right: 8,
+        top: 8,
+        color: theme.palette.grey[500],
+      })}
+    >
+      <CloseIcon />
+    </IconButton>
+    <DialogContent>
+
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 4, overflow:'hidden' }}>
+
+        <Box>
+        <Typography sx={{mb:'7px',fontWeight:'bold'}}>Category</Typography>
+        {/* Select Element */}
+        <FormControl sx={{  width: 250 }}>
+          {/* <InputLabel>Name</InputLabel> */}
+          <Select
+            labelId="demo-multiple-name-label"
+            id="demo-multiple-name"
+            value={category}
+            size='small'
+            onChange={handleChange}
+            // input={<OutlinedInput />}
+            // MenuProps={MenuProps}
+            sx={{height:'40px'}}
+          >
+            
+          </Select>
+        </FormControl>
+        </Box>
+
+        <Box>
+          <Typography sx={{fontWeight:'bold'}}>SubCategory</Typography>
+          <FormControl sx={{mt:1}}>
+          <TextField 
+              id="outlined-basic" 
+              name="subcategory" 
+              variant="outlined" 
+              style={{width:'100%'}} 
+              size="small" 
+              onChange={onInputChange}
+              value={formData.subcategory}
+              placeholder='Enter Subcategory'
+           />
+          
+          </FormControl>
+        </Box>
+        
+      </Box>
+        <Box sx={{ mr: '100px',mt:4, mb:5, flexDirection: 'column' }}>
+                                <Typography sx={{ fontWeight: 'bold', mb: '5px' }}>Upload Image</Typography>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={onFileChange}
+                                />
+                                <Button 
+                                    onClick={handleFileClick}
+                                    sx={{
+                                        color: '#1f1f1f',
+                                        backgroundColor: '#f2f2f2',
+                                        textTransform: 'none',
+                                        p: '10px',
+                                        border: '1px solid #fafafa',
+                                        '&:hover': {
+                                            backgroundColor: '#e5e5e5'
+                                        }
+                                    }}
+                                >
+                                    Choose File
+                                </Button>
+                                {formData.file && (
+                            <Typography sx={{ fontSize: '13px', mt: '5px',ml:'20px' }}>
+                                {formData.file.name}
+                            </Typography>
+                        )}
+                            </Box>
+        
+        <Box sx={{mt:'15px'}}>
+        <Typography sx={{fontWeight:'bold'}}>Description</Typography>
+        <TextField
+          // label="Enter your description"
+          placeholder='Enter Your description'
+          multiline
+          rows={4}
+          variant="outlined"
+          name="description"
+          value={formData.description}
+          onChange={onInputChange}
+          fullWidth
+          // sx={{mt:'5px'}}
+          />
+        </Box>
+
+        
+    </DialogContent>
+    <DialogActions sx={{mr:1,mb:1}}>
+      <Button 
+        variant='outlined'
+        disabled={!IsformDisabled}
+         sx={{minWidth:84,height:'40px',padding:'7px',backgroundColor:"#d40000",textTransform:'none',color:'white'}}>
+          Add
+        </Button>
+      <Button 
+        variant='outlined' 
+        sx={{minWidth:84,height:'40px',padding:'7px',textTransform:'none',color:'black',border:'2px solid #ebebeb'}} 
+        onClick={onClose}>
+        Close
+      </Button>
+    </DialogActions>
+  </BootstrapDialog>
+  );
+});
+
+
+
+
+
+
+
 
 const SubCategory = () => {
 
@@ -45,37 +233,26 @@ const SubCategory = () => {
     }
 
 
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-      PaperProps: {
-        style: {
-          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-          width: 250,
-        },
-      },
-    };
+    // const ITEM_HEIGHT = 48;
+    // const ITEM_PADDING_TOP = 8;
+    
 
-    const names = [
-      'Cleaning',
-      'Plumbing',
-      'Electrical',
-      'Appliance',
-      'Salon',
-      'HVAC',
-      'Painting',
-      'Carpentry',
-      'Exterior',
-    ];
+    
 
     // const itemsPerPage = 10;
     // const [currentPage, setCurrentPage] = useState(1);
     const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const Actionopen = Boolean(anchorEl);
-    const theme = useTheme();
-    const [personName, setPersonName] = React.useState<any>("");
+    // const theme = useTheme();
+   
     const [SubCategory,setSubcategory] = useState<SubCategory[]>([])
+    const [formData, setFormData] = useState({
+            subcategory:'',
+            description: '',
+            file: null as File | null
+    });
+    const [category,setCategory] = useState('');
     
 
 
@@ -86,46 +263,71 @@ const SubCategory = () => {
     })
       
   },[]);
+
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
     
   const handleActionClose = () => {
             setAnchorEl(null);
   };
 
+   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+          const { name, value } = e.target;
+  
+          const filteredValue = value.replace(/[^a-zA-Z\s]/g, '');
+  
+          setFormData(prev => ({
+              ...prev,
+              [name]: filteredValue
+          }));
+      }, []);
+
+
+  
+      const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+          const file = event.target.files?.[0] || null;
+          setFormData(prev => ({
+              ...prev,
+              file
+          }));
+      }, []);
+  
+
  
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+  const handleChange = (event: SelectChangeEvent<any>) => {
     // event.preventDefault()
     let value = event.target.value;
-    setPersonName(value);
+    setCategory(value);
   };
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };  
+ const handleClose = useCallback(() => {
+         setOpen(false);
+         setFormData({
+             subcategory: '',
+             description: '',
+             file: null
+         });
+     }, []); 
 
-
-  function getStyles(name: string, personName: string[], theme: Theme) {
-    return {
-      fontWeight: personName.includes(name)
-        ? theme.typography.fontWeightMedium
-        : theme.typography.fontWeightRegular,
+     const handleView = (row: any) => {
+      console.log('View:', row);
     };
-  }
+  
+    const handleDelete = (row: any) => {
+      console.log('Delete:', row);
+    };
+
+
+
 
   
 
-  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-    },
-  }));
+  
 
    useEffect(()=>{
         const fetchData = async() => {
@@ -179,109 +381,17 @@ const SubCategory = () => {
 
 
         {/* Add content Button with Modal */}
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
+       <AddSubCategoryDialog
           open={open}
-        >
-          <DialogTitle
-            sx={{ m: 0, p: 2, fontWeight: "bold" }}
-            id="customized-dialog-title"
-          >
-            Edit Sub Category
-          </DialogTitle>
-          <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
-          >
-            <CloseIcon />
-          </IconButton>
-          <DialogContent>
+          onClose={handleClose}
+          formData={formData}
+          category={category}
+          handleChange={handleChange}
+          onInputChange={handleInputChange}
+          onFileChange={handleFileChange}
+          fileInputRef={fileInputRef}
 
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 4, overflow:'hidden' }}>
-
-              <Box>
-              <Typography sx={{mb:'7px',fontWeight:'bold'}}>Category</Typography>
-              {/* Select Element */}
-              <FormControl sx={{  width: 250 }}>
-                {/* <InputLabel>Name</InputLabel> */}
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  value={personName}
-                  size='small'
-                  onChange={handleChange}
-                  // input={<OutlinedInput />}
-                  MenuProps={MenuProps}
-                  sx={{height:'40px'}}
-                >
-                  {names.map((name) => (  
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, personName, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              </Box>
-
-              <Box>
-                <Typography sx={{fontWeight:'bold'}}>SubCategory</Typography>
-                <FormControl sx={{mt:1}}>
-                <TextField id="outlined-basic" variant="outlined" style={{width:'100%'}} size="small" />
-                
-                </FormControl>
-              </Box>
-              
-            </Box>
-            <Box sx={{mt:4,mb:4}}>
-              <Typography sx={{fontWeight:'bold',mb:'5px'}}>Upload Image</Typography>
-              <Input
-                // accept="*"
-                id="file-input"
-                type="file"
-                style={{ display: 'none' }}
-                // onChange={handleFileChange}
-            />
-            <Button sx={{color:'#1f1f1f',backgroundColor:'#f2f2f2',textTransform:'none',p:'10px',border:'1px solid #fafafa '}} component="span">
-                Choose File
-            </Button>
-              </Box>
-              
-              <Box sx={{mt:'15px'}}>
-              <Typography sx={{fontWeight:'bold'}}>Description</Typography>
-              <TextField
-                label="Enter your description"
-                multiline
-                rows={4}
-                variant="outlined"
-                // value={value}
-                // onChange={onChange}
-                fullWidth
-                // sx={{mt:'5px'}}
-                />
-              </Box>
-
-              
-          </DialogContent>
-          <DialogActions sx={{mr:1,mb:1}}>
-            <Button variant='outlined' sx={{minWidth:84,height:'40px',padding:'7px',backgroundColor:"#d40000",textTransform:'none',color:'white'}}>Add</Button>
-            <Button variant='outlined' sx={{minWidth:84,height:'40px',padding:'7px',textTransform:'none',color:'black',border:'2px solid #ebebeb'}} onClick={handleClose}>
-              Close
-            </Button>
-          </DialogActions>
-        </BootstrapDialog>
+       />
 
         <TableContainer>
           <Table
@@ -341,26 +451,11 @@ const SubCategory = () => {
                     </TableCell>
                     <TableCell sx={{ border:'1px solid #ebebeb',borderCollapse:'collapse',width:'50px'}}>{item.sub_id}</TableCell>
                     <TableCell sx={{border:'1px solid #ebebeb',borderCollapse:'collapse'}}>{item.description}</TableCell>
-                    <TableCell sx={{border:'1px solid #ebebeb',borderCollapse:'collapse'}}>
-                      <BsThreeDots size={25} color="#707070" style={{cursor: "pointer"}} onClick={handleClick} />
-                      <Menu anchorEl={anchorEl} open={Actionopen} onClose={handleActionClose} sx={{backgroundColor:'white'}}>
-                      <MenuItem
-                        onClick={() => {
-                          handleActionClose();
-                          // onView();
-                        }}
-                      >
-                        View
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleActionClose();
-                          // onDelete();
-                        }}
-                      >
-                        Delete
-                      </MenuItem>
-                    </Menu>
+                    <TableCell sx={{pl:'50px', border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
+                                              <ActionMenu
+                                                onView={() => handleView(item.id)}
+                                                onDelete={() => handleDelete(item.id)}
+                                            />
                     </TableCell>
                   </TableRow>
                 ))

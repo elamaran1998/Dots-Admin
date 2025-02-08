@@ -1,27 +1,17 @@
-import { Box, Pagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Menu, MenuItem, Pagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 // import React from 'react'
-import data from '../API/SampleUser.json';
-import { useEffect } from 'react';
+// import data from '../API/SampleUser.json';
+import {  useEffect, useState } from 'react';
 import { BsThreeDots } from "react-icons/bs";
-// import { styled } from '@mui/material/styles';
-// import Dialog from '@mui/material/Dialog';
-// import DialogTitle from '@mui/material/DialogTitle';
-// import DialogContent from '@mui/material/DialogContent';
-// import DialogActions from '@mui/material/DialogActions';
-// import IconButton from '@mui/material/IconButton';
-// import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
-// import SelectInput from '@mui/material/Select/SelectInput';
-// import { Theme, useTheme } from '@mui/material/styles';
-// import OutlinedInput from '@mui/material/OutlinedInput';
-// import InputLabel from '@mui/material/InputLabel';
-// import MenuItem from '@mui/material/MenuItem';
-// import { SelectChangeEvent } from '@mui/material/Select';
-// import axios from 'axios';
 import { FetchUsers } from '../API/api';
+import eye from "../assets/eye/eye.png";
+import { styled } from '@mui/material/styles';
+// import { Theme, useTheme } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
+import ActionMenu from '../Components/Common/ActionMenu';
 
 
-// import { Button, Input } from '@mui/material';
 
 interface UsersData {
   ID: String;
@@ -73,21 +63,32 @@ const UsersList = () => {
   // const theme = useTheme();
   // const [personName, setPersonName] = React.useState<string[]>([]);
 
-  const [Users,setUsers] = React.useState<UsersData[]>([])
+  const [Users,setUsers] = React.useState<UsersData[]>([]);
+  const [eyeopen,seteyeOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const Actionopen = Boolean(anchorEl);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
 
 
-  // const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   setPersonName(
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
 
+
+const handleEyeOpen = () => {
+  seteyeOpen(true)
+}
     
+const handleEyeClose = () => {
+  seteyeOpen(false)
+}
 
+const handleClick = (event:any,row:any) => {
+  console.log(event.target.value,"dadad")
+        setAnchorEl(event.currentTarget);
+        setSelectedRow(row);
+    };
+
+const handleActionClose = () => {
+        setAnchorEl(null);
+    };
 
 
   
@@ -110,16 +111,51 @@ const UsersList = () => {
   //   };
   // }
 
+  const handleView = (row: any) => {
+    console.log('View:', row);
+  };
+
+  const handleDelete = (row: any) => {
+    console.log('Delete:', row);
+  };
+
   
 
-  // const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  //   '& .MuiDialogContent-root': {
-  //     padding: theme.spacing(2),
-  //   },
-  //   '& .MuiDialogActions-root': {
-  //     padding: theme.spacing(1),
-  //   },
-  // }));
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+  }));
+
+  const planHistory = [
+    { 
+      title: "Home Cleaning", 
+      date: "12/12/2024 to 05/03/2025", 
+      subscription: "Carpet Cleaning", 
+      status: "Current" 
+    },
+    { 
+      title: "Electronics", 
+      date: "05/05/2024 to 08/08/2024", 
+      subscription: "Carpet Cleaning", 
+      status: "Expired" 
+    },
+    { 
+      title: "Home Appliance", 
+      date: "03/03/2024 to 04/04/2024", 
+      subscription: "Carpet Cleaning", 
+      status: "Expired" 
+    },
+    { 
+      title: "Plumbing", 
+      date: "02/01/2024 to 14/03/2024", 
+      subscription: "Carpet Cleaning", 
+      status: "Expired" 
+    },
+  ];
 
   useEffect(()=>{
     const fetchData = async() => {
@@ -135,10 +171,6 @@ const UsersList = () => {
 
   return (
     <>
-      {/* <Box display="flex" alignItems="center" justifyContent="space-between">
-             <Typography style={{ marginRight: '20px', fontSize:'18px',fontWeight:800, }}>Service Category</Typography> 
-             <Button variant="contained" color="primary"> Click Me </Button>
-         </Box> */}
       <Box sx={{ width: "100%" }}>
         <Box
           sx={{
@@ -158,6 +190,95 @@ const UsersList = () => {
       </Box>
       <Box>
         {/* Add content Button with Modal */}
+
+
+        {/* Eye Open Modal */}
+
+        <BootstrapDialog
+          onClose={handleEyeClose}
+          aria-labelledby="customized-dialog-title"
+          open={eyeopen}
+          // sx={{pa}}
+        >
+          <DialogTitle
+            sx={{ m: 0, p: 2, fontWeight: "bold" }}
+            id="customized-dialog-title"
+          >
+            User Plan History
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={handleEyeClose}
+            sx={(theme) => ({
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: theme.palette.grey[500],
+            })}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Divider sx={{ borderBottom: 2, color: "#e0e0e0" }} />
+
+          <DialogContent>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap:'wrap',
+                justifyContent:'space-between',
+                flexDirection:'row',
+                alignItems: "center",
+                // gap: 10,
+                // overflow: "hidden",
+              }}
+            > 
+            {planHistory.map((plan, index) => (
+          <Grid container spacing={2} key={index} sx={{ width:'50%' , marginBottom: 2 }}>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">
+                {index + 1}. {plan.title}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">
+                <strong>Date:</strong> {plan.date}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Subscription:</strong> {plan.subscription}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: plan.status === "Current" ? "green" : "red",
+                }}
+              >
+                <strong>Status:</strong> {plan.status}
+              </Typography>
+            </Grid>
+          </Grid>
+        ))}
+
+            </Box>
+
+           
+          </DialogContent>
+          <DialogActions sx={{ mr: 1, mb: 1 }}>
+            <Button
+              variant="outlined"
+              sx={{
+                minWidth: 84,
+                height: "40px",
+                padding: "7px",
+                textTransform: "none",
+                color: "black",
+                border: "2px solid #ebebeb",
+              }}
+              onClick={handleEyeClose}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
 
      
         <TableContainer>
@@ -224,10 +345,13 @@ const UsersList = () => {
                     <TableCell sx={{ border:'1px solid #ebebeb', borderCollapse:'collapse'}}>{item.Email_Address}</TableCell>
                     <TableCell sx={{ border:'1px solid #ebebeb', borderCollapse:'collapse'}}>{item.User_ID}</TableCell>
                     <TableCell sx={{fontSize:'17px',border:'1px solid #ebebeb', borderCollapse:'collapse'}}>Active</TableCell>
-                    <TableCell sx={{ border:'1px solid #ebebeb', borderCollapse:'collapse'}}>eye</TableCell>
+                    <TableCell sx={{ border:'1px solid #ebebeb', borderCollapse:'collapse',cursor:'pointer'}}><img src={eye} height={20} width={20} onClick={handleEyeOpen} /></TableCell>
 
-                    <TableCell>
-                      <BsThreeDots size={25} color="#707070" />
+                    <TableCell sx={{pl:'40px', border: '1px solid #ebebeb', borderCollapse: 'collapse' }}>
+                    <ActionMenu
+                     onView={() => handleView(item.ID)}
+                      onDelete={() => handleDelete(item.ID)}
+                />
                     </TableCell>
                   </TableRow>
                 ))

@@ -1,12 +1,18 @@
 // import React from 'react'
 
-import { Box, Divider, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Box, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 
 const Dashboard = () => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation();
+
+  const {userDetails} = location.state || {};
+
+  console.log(userDetails,"Naviagte")
 
 
   return (
