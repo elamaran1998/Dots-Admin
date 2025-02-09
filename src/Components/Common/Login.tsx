@@ -37,6 +37,7 @@ import check from "../../assets/check/check.png";
 import useToast from './ToastMsgs';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../Redux/reducers/TokenReducers';
+import { useAuth } from '../../Contexts/AuthContext';
 
 
 
@@ -69,6 +70,7 @@ function Login() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { login } = useAuth();
 
  
 
@@ -82,6 +84,7 @@ function Login() {
     // console.log(password,email,"Targtet")
     const details = {email,password}
     let response =  await LoginUser(details);
+    login(response.data.token);
 
     setUserDetails(response.data)
 

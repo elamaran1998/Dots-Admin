@@ -11,6 +11,8 @@ import Subscription from './Pages/Subscription'
 import Appointment from './Pages/Appointment'
 import Polls from './Pages/Polls'
 import Settings from './Pages/Settings'
+import { AuthProvider } from './Contexts/AuthContext'
+import { ProtectedRoute } from './Components/ProtectedRoute'
 
 
 const App: FC = () => {
@@ -18,11 +20,18 @@ const App: FC = () => {
 
   return (
     // <BrowserRouter>
+    <AuthProvider>
     <Router>
         {/* <Home /> */}
           <Routes>
             <Route path='/' element={<Login />}></Route>
-           <Route path='/home' element={<Home />}>
+           <Route path='/home' element={
+
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
+
+           }>
                 <Route path='dashboard' index element={<Dashboard />}></Route>
                 <Route path='service' element={<ServiceCategory />}></Route>
                  <Route path='subcategory' element={<Subcategory />}></Route>
@@ -32,16 +41,11 @@ const App: FC = () => {
                  <Route path='appointment' element={<Appointment />}></Route>
                  <Route path='poll' element={<Polls />}></Route>
                  <Route path='settings' element={<Settings />}></Route>
-
-
-
-
-
-           </Route>
+          </Route>
             
           </Routes>
         </Router>
-    // </BrowserRouter>
+        </AuthProvider>
   )
 }
 

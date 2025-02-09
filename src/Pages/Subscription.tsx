@@ -1,9 +1,9 @@
-import { Box, Button, Divider, FormControl, Grid, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FormControl, Grid, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography, useMediaQuery } from '@mui/material'
 // import React from 'react'
 import data from '../API/SampleUser.json';
 // import { useState } from 'react';
 import { BsThreeDots } from "react-icons/bs";
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,6 +20,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 import Tab from '@mui/material/Tab';
 import ActionMenu from '../Components/Common/ActionMenu';
+// import theme from '../globals/theme';
 // import TabContext from '@mui/lab/TabContext';
 // import TabList from '@mui/lab/TabList';
 // import TabPanel from '@mui/lab/TabPanel';
@@ -217,6 +218,9 @@ const Subscription = () => {
         "Subscription Amt",
         "Action"
     ];
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // const ITEM_HEIGHT = 48;
     // const ITEM_PADDING_TOP = 8;

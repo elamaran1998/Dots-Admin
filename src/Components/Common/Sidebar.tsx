@@ -43,6 +43,7 @@ import Dots from "../../assets/logo/Dots.png";
 import add from "../../assets/sideBar_Icons/add.png";
 import theme from '../../globals/theme';
 import { IoIosArrowDown } from "react-icons/io";
+import { LogoutModal } from './LogoutModel';
 
 
 interface MenuItem {
@@ -56,7 +57,8 @@ const drawerWidth = 270;
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeIndex,setActiveIndex] = useState(0)
+  const [activeIndex,setActiveIndex] = useState(0);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -69,6 +71,12 @@ function App() {
     setMobileOpen(!mobileOpen);
   };
   
+  const handleLogout = () => {
+    // Add your logout logic here
+    localStorage.clear();
+    // You might want to clear any auth state, tokens, etc.
+    navigate('/');
+  };
 
   const mainMenuItems: MenuItem[] = [
     { text: 'Dashboard',index:1, icon: <img src={Dashboard} alt="Dashboard" />, path: 'dashboard' },
@@ -83,10 +91,13 @@ function App() {
     { text: 'Logout',index:9, icon: <img src={Logout} alt="Logout" />, path: '/' },
   ];
 
-  const handleClick = (index: any, path: string) => {
-    // console.log(index.target.value,"Idx")
-    setActiveIndex(index);
-    navigate(path)
+  const handleClick = (index: number, path: string) => {
+    if (path === '/') {
+      setIsLogoutModalOpen(true);
+    } else {
+      setActiveIndex(index);
+      navigate(path);
+    }
   };
 
   const drawer = (
@@ -260,6 +271,15 @@ function App() {
         <Toolbar />
        
       </Box>
+
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          handleLogout();
+          setIsLogoutModalOpen(false);
+        }}
+      />
     </Box>
   );
 }
